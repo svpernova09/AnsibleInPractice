@@ -1,0 +1,19 @@
+---
+- name: Set up a LAMP server
+  hosts: webservers
+  remote_user: vagrant
+  become: true
+  vars:
+    - application_user: appuser
+    - application_url: ourapplication.test
+    - application_path: /home/appuser/public
+    - production: no
+    - staging: no
+    - development: yes
+  roles:
+    - common
+    - user-accounts
+    - application
+    - php
+    - nginx
+    - mysql

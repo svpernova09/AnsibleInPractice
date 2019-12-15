@@ -1,0 +1,12 @@
+---
+- name: Set our xdebug FPM ini
+  template:
+    src: xdebug.ini.j2
+    dest: /etc/php/7.4/mods-available/xdebug.ini
+  notify: reload php-fpm
+
+- name: Set our opcache FPM ini
+  template:
+    src: opcache.ini.j2
+    dest: /etc/php/7.4/mods-available/opcache.ini
+  notify: reload php-fpm

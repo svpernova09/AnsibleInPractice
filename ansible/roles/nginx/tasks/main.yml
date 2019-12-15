@@ -1,0 +1,71 @@
+---
+- name: Install nginx
+  apt:
+    state: present
+    force_apt_get: yes
+    pkg:
+      - nginx
+
+- name: add the app user to www-data group
+  user:
+    name: "{{ application_user }}"
+    group: www-data
+
+- name: Disable Default nginx Site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Remove Default nginx Site
+  file:
+    path: /etc/nginx/sites-available/default
+    state: absent
+
+- name: Set Nginx fastcgi_params
+  template:
+    src: fastcgi_params.j2
+    dest: /etc/nginx/fastcgi_params
+
+- name: Setup nginx user to our appuser
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: "user www-data;"
+    line: "user {{ application_user }};"
+  notify: reload nginx
+
+- name: Setup www-data user to our appuser
+  lineinfile:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    regexp: "user = www-data"
+    line: "user = {{ application_user }}"
+
+- name: Setup www-data group to our appuser
+  lineinfile:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    regexp: "group www-data"
+    line: "group = {{ application_user }}"
+  notify: reload nginx
+
+- name: Setup www-data user to our appuser
+  lineinfile:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    regexp: "listen.owner = www-data"
+    line: "listen.owner = {{ application_user }}"
+
+- name: Set permissions on PHP's sock file just in case
+  file:
+    path: /var/run/php/php7.4-fpm.sock
+    mode: "0755"
+
+- name: Setup www-data group to our appuser
+  lineinfile:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    regexp: "listen.group www-data"
+    line: "listen.group = {{ application_user }}"
+  notify: reload nginx
+
+- name: Setup our application virtualhost file
+  template:
+    src: virtualhost.conf.j2
+    dest: "/etc/nginx/sites-enabled/{{ application_url }}.conf"
+  notify: reload php-fpm

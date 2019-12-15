@@ -1,0 +1,45 @@
+---
+- name: Install mysql-server
+  apt:
+    state: present
+    force_apt_get: yes
+    pkg:
+      - mysql-server
+      - python-mysqldb
+
+- name: Configure MySQL Password Lifetime
+  lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    line: default_password_lifetime = 0
+    create: yes
+
+- name: Set my.cnf for Application User
+  template:
+    src: my.cnf.j2
+    dest: "/home/{{ application_user }}/.my.cnf"
+
+- name: Configure MySQL Remote Access
+  lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: "bind-address.*=.*"
+    line: "bind-address = 0.0.0.0"
+  notify: reload mysql
+
+- name: Create a new database
+  mysql_db:
+    name: "{{ application_user }}"
+    state: present
+
+- name: Create a mysql user
+  mysql_user:
+    name: “{{ application_user }}”
+    password: “{{ application_user }}”
+    host: localhost
+    priv: "{{ application_user }}.*:ALL"
+    state: present
+
+- name: Removes anonymous user account for localhost
+  mysql_user:
+    name: ''
+    host: localhost
+    state: absent

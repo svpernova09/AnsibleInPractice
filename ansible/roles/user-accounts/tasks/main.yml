@@ -1,0 +1,12 @@
+---
+- name: Create application user account
+  user:
+    name: "{{ application_user }}"
+    state: present
+    shell: /bin/bash
+
+- name: Set authorized keys taken from url
+  authorized_key:
+    user: "{{ application_user }}"
+    state: present
+    key: https://github.com/svpernova09.keys

@@ -1,0 +1,37 @@
+---
+- name: Install common packages
+  apt:
+    state: present
+    force_apt_get: yes
+    pkg:
+      - bash
+      - bc
+      - openssl
+      - libssl-dev
+      - libssl-doc
+      - git-all
+      - vim
+      - htop
+      - ntp
+      - curl
+      - parallel
+      - libreadline-dev
+      - ufw
+      - software-properties-common
+
+- name: Remove Apache
+  apt:
+    state: absent
+    purge: yes
+    force_apt_get: yes
+    pkg:
+      - apache2
+
+- name: Allow connections through firewall
+  ufw:
+    rule: allow
+    port: '{{ item }}'
+    proto: tcp
+  with_items:
+    - "80"
+    - "443"

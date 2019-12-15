@@ -1,0 +1,24 @@
+---
+- name: Set error_reporting on CLI
+  lineinfile:
+    path: /etc/php/7.4/cli/php.ini
+    regexp: 'error_reporting = .*'
+    line: error_reporting = E_ALL
+
+- name: Set display_errors on CLI
+  lineinfile:
+    path: /etc/php/7.4/cli/php.ini
+    regexp: 'display_errors = .*'
+    line: display_errors = On
+
+- name: Set memory_limit on CLI
+  lineinfile:
+    path: /etc/php/7.4/cli/php.ini
+    regexp: 'memory_limit = .*'
+    line: memory_limit = 512M
+
+- name: Set timezone on CLI
+  lineinfile:
+    path: /etc/php/7.4/cli/php.ini
+    regexp: ';date.timezone.*'
+    line: date.timezone = UTC

@@ -1,0 +1,37 @@
+---
+- name: Set error_reporting on FPM
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: 'error_reporting = .*'
+    line: error_reporting = E_ALL
+
+- name: Set display_errors on FPM
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: 'display_errors = .*'
+    line: display_errors = On
+
+- name: Set cgi.fix_pathinfo on FPM
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: ';cgi.fix_pathinfo=1'
+    line: cgi.fix_pathinfo=0
+
+- name: Set upload_max_filesize on FPM
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: 'upload_max_filesize = .*'
+    line: upload_max_filesize = 100M
+
+- name: Set post_max_size on FPM
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: 'post_max_size = .*'
+    line: post_max_size = 100M
+
+- name: Set date.timezone on FPM
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: ';date.timezone.*'
+    line: date.timezone = UTC
+  notify: reload php-fpm

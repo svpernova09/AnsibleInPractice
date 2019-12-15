@@ -1,0 +1,16 @@
+---
+- name: Create the application path if it does not exist
+  file:
+    path: "{{ application_path }}"
+    state: directory
+    owner: "{{ application_user }}"
+    group: "{{ application_user }}"
+    mode: '0755'
+
+- name: Set PHP file
+  template:
+    src: index.php.j2
+    dest: "{{ application_path }}/index.php"
+    owner: "{{ application_user }}"
+    group: "{{ application_user }}"
+

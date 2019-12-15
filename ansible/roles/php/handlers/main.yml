@@ -1,0 +1,4 @@
+---
+- name: reload php-fpm
+  service: name=php7.4-fpm state=reloaded enabled=yes
+
